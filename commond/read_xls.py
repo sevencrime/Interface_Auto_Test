@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 import time
 
-import xlrd
+import openpyxl
 import sys
 import os
-from xlutils.copy import copy
+from openpyxl.styles import Alignment
 
-import xlwt
 
 curPath = os.path.abspath(os.path.dirname(__file__))
 rootPath = curPath[:curPath.find("Interface_Auto_Test\\") + len("Interface_Auto_Test\\")]
@@ -18,64 +17,63 @@ class Read_xls:
 	def __init__(self, path):
 		self.path = path
 		# 打开文件，获取excel文件的workbook（工作簿）对象
-		self.workbook = xlrd.open_workbook(self.path, formatting_info=True)
-		self.wb = copy(self.workbook)
+		# self.workbook = xlrd.open_workbook(self.path, formatting_info=True)
+		self.workbook = openpyxl.load_workbook(self.path)
 
 	def read(self):
 
 		# print(path)
 		# 打开excel文件,open_workbook(path),path为excel所在的路径
 		# 打开excel表,这里表示打开第一张表
-		table = self.workbook.sheets()[0]
+		table = self.workbook.get_sheet_by_name(u"委托下单")
 
-		nrows = table.nrows		# 获取excel的行数
+		# nrows = table.max_row		# 获取excel的行数
 		# print(nrows)
-		ncols = table.ncols		#获取excel的列数
+		# ncols = table.max_column		#获取excel的列数
 		# print(ncols)
-		keys = table.row_values(0)		#获取第一行的值
+		# keys = table.row_values(0)		#获取第一行的值, 返回一个list
 		# print(keys)
 
-		resp = []		#创建一个list，用于存放
+		rows = []
+		for row in table.iter_rows():
+			rows.append(row)
 
+		cols = []
+		for col in table.iter_cols():
+			cols.append(col)
+
+		resp = []		#创建一个list，用于存放
 		x = 1
-		for i in range(nrows-1):
+		for i in range(len(rows)-1):
 			s = {}
 			# print(i)
 			s['rowNum'] = i+2 	#加入用例的行数，用户后面写入数据
-			values = table.row_values(x)
+			values = rows[x]	# 获取每一行的值
 			# print(values)
-			for j in range(ncols):
+			for j in range(len(cols)):
 				# print('j=',j)
-				s[keys[j]] = values[j]
+				s[rows[0][j].value] = values[j].value
 			# print(s)
 			resp.append(s)
 			x += 1
 
 		return resp
 
-	def write(self, testdata, resp):
+	def write(self, testdata, resp, resp_time):
+		table = self.workbook.get_sheet_by_name(u"委托下单")
 
+		# 写入预期结果, 下标从1开始算
+		start = time.time()
+		# table.cell(row=testdata['rowNum'], column=12, value=str(resp))
+		# 设置单元格格式
+		align = Alignment(horizontal='left', vertical='center', wrap_text=True)
+		# 写入response
+		table.cell(row=testdata['rowNum'], column=12, value=str(resp)).alignment = align
+		# 写入响应时间
+		table.cell(row=testdata['rowNum'], column=13, value=str(resp_time))
 
-		# sheet = wb.get_sheet(0)
-		# 通过sheet名获取sheet对象
-		sheet = self.wb.get_sheet(0)
-
-		style = xlwt.XFStyle()
-		# 设置font字体
-		font = xlwt.Font()
-		alignment = xlwt.Alignment()
-		font.name = '宋体'	#字体样式
-		font.bold = True	#粗体
-		alignment.horz = 0x01
-		alignment.vert = 0x00
-		alignment.wrap = xlwt.Alignment.WRAP_AT_RIGHT # 自动换行
-		style.alignment = alignment
-
-		# 写入预期结果, 下标从0 开始算
-		sheet.write(testdata['rowNum']-1, 11, str(resp), style)
-
-		self.wb.save(rootPath + r'docs/data_copy.xls')
-
+		self.workbook.save(rootPath + r'docs/data_copy.xlsx')
+		print(time.time() - start, "33333333333333333333333333333333333333333333333")
 
 	# 转换成json文件, 供postman使用
 	def get_dict(self, resp):
@@ -172,7 +170,7 @@ if __name__ == "__main__":
 	# path = 'E:/郑某人/Python_Demo/Interface_Test_Frame/data/data.xls'
 	curPath = os.path.abspath(os.path.dirname(__file__))
 	rootPath = curPath[:curPath.find("Interface_Auto_Test\\") + len("Interface_Auto_Test\\")]
-	path = rootPath+r'docs/data_copy.xls'
+	path = rootPath+r'docs/data_copy.xlsx'
 	reads = Read_xls(path)
 	reads.write({"rowNum" : 3}, "2222222")
 
