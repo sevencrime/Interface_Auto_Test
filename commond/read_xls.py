@@ -80,7 +80,7 @@ class Read_xls:
 		list1 = []
 		for res in resp:
 			# 转换body
-			body = res['body'].replace(r"\n", "").replace(" ", "").replace(r'"', r'\"')
+			# body = res['body'].replace(r"\n", "").replace(" ", "").replace(r'"', r'\"')
 			# print(body)
 
 			dict1 = {
@@ -170,8 +170,11 @@ if __name__ == "__main__":
 	# path = 'E:/郑某人/Python_Demo/Interface_Test_Frame/data/data.xls'
 	curPath = os.path.abspath(os.path.dirname(__file__))
 	rootPath = curPath[:curPath.find("Interface_Auto_Test\\") + len("Interface_Auto_Test\\")]
-	path = rootPath+r'docs/data_copy.xlsx'
+	path = rootPath+r'docs/data.xlsx'
 	reads = Read_xls(path)
-	reads.write({"rowNum" : 3}, "2222222")
+	# reads.write({"rowNum" : 3}, "2222222")
+	resp = reads.read()
+	# print(resp)
+	reads.get_dict(resp)
 
 

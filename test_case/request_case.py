@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys, io
+# 改变标准输出编码
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='gb18030')
 from requests_toolbelt import MultipartEncoder
 import requests
 import json
-
+import time
 from commond.GlobalMap import GlobalMap
 
 
@@ -12,30 +15,24 @@ class request_case:
 
 	gm = GlobalMap()
 
-	def login(self):
-		url = 'http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx'
+	def login(self, url):
 		m = MultipartEncoder(fields={'QueryString': '{"account":"3001331112","password":"wjxpg4","branch_no":"","account_type":"8","MF":201,"op_station":"ZctPcY8BCaT6tCmxYYPc6TwcnPKCTxpQ","op_entrust_way":"A","language_type":"1"}'})
 		resp = requests.post(url, data=m, headers={'Content-Type' : m.content_type})
 
 		try:
 			assert resp.json()['error_info'].strip() == "ok"
-			return resp.json()['data']['session_no']
+			print("\n登录接口返回的数据为 : {}".format(resp.json()))
+			return resp.json()
 		except AssertionError:
-			print(resp.json())
 			raise AssertionError
 
 	def dataProcessing(self, casedata):
-
 		# print(casedata)
 
 		rowNum = casedata['rowNum']
-		if rowNum % 10 == 0 or rowNum == 2:
-			# self.session_no = str(self.login())
-			self.gm.set_value(session_no=str(self.login()))
 
-		import pdb; pdb.set_trace()
 		# 解析预置条件
-		Preconditionslist = casedata['Preconditions'].split("MF=")
+		Preconditionslist = (casedata['Preconditions'] or "").split("MF=")
 		if Preconditionslist.__len__() > 1:
 			MFlist = Preconditionslist[1].split(",")
 			for MF in MFlist:
@@ -43,13 +40,18 @@ class request_case:
 				# 取出MF对应的参数, 然后调用request
 				# self.request()
 
-		method = casedata['method']		#从excel读取method
-		url = casedata['URL']		#从excel中读取url
+		method = casedata['method'].strip()		#从excel读取method
+		url = casedata['URL'].strip()		#从excel中读取url
 		expected = casedata['Expected_Response']		#从excel中读取期望结果
 
-		if casedata['body'] != "":
+		if rowNum in [2, 63, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 82, 83]:
+			# self.session_no = str(self.login())
+			loginres = self.login(url)
+			self.gm.set_value(session_no=str(loginres['data']['session_no']))
+			self.gm.set_value(thread_id=str(loginres['data']['thread_id']))
 
-			body = casedata['body'].replace("{{session_no}}", (self.gm.get_value("session_no") or "0"))
+		if (casedata['body'] or "") != "":
+			body = casedata['body'].replace("{{session_no}}", (self.gm.get_value("session_no") or "0")).replace("{{thread_id}}", self.gm.get_value("thread_id"))
 			m = MultipartEncoder(fields={'QueryString': body})
 		else:
 			body = ""
@@ -70,19 +72,22 @@ class request_case:
 		print("请求头 : {}".format(headers))
 		print("请求参数: {} ".format(body))
 
-		self.request(method, url, m, headers)
+		return self.request(method, url, m, headers)
+
 
 
 	def request(self, method, url, data, headers):
-		s = requests.session()
+		# s = requests.session()
 
 		try:
-			response = s.request(method=method,url=url,data=data, headers=headers)
+			response = requests.request(method=method,url=url,data=data, headers=headers)
 			print("status_code : {}".format(response.status_code))
 			print("响应时间为 : {}".format(response.elapsed.total_seconds()))
 			print("响应数据为 : {}".format(response.json()))
-
 			assert response.status_code == 200
+			# if response.json()['error_info'] == '由于长时间未操作或其他原因，为确保您的交易安全，请重新登录!':
+			# 	import pdb; pdb.set_trace()
+
 			return response.json(), response.elapsed.total_seconds()
 		except Exception as e:
 			print("异常信息为 : {}".format(e))

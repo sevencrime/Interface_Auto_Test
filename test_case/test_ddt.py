@@ -30,7 +30,7 @@ class Test_ddt:
 		self.exl.write(testdata, response, resp_time)
 
 if __name__ == '__main__':
-	pytest.main(["-v", "-s", "test_ddt.py"])
+	pytest.main(["-v", "-s", "test_ddt.py", "--pdb"])
 
 
 
