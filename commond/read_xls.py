@@ -25,6 +25,26 @@ class Read_xls:
 
 	def read(self):
 
+		keyName = {
+		    "用例编号":"case",
+		    "测试模块":"module",
+		    "子模块":"Submodule",
+		    "优先级":"level",
+		    "测试类型":"test_type",
+		    "用例标题":"name",
+		    "预置条件":"Preconditions",
+		    "接口地址":"URL",
+		    "请求方式":"method",
+		    "请求头":"headers",
+		    "请求参数":"body",
+		    "期望结果":"Expected_Response",
+		    "响应时间":"Resphone_Time",
+		    "测试结果":"result",
+		    "测试轮次":"Test_Round",
+		    "执行人":"tester",
+		    "备注":"remark",
+		}
+
 		# print(path)
 		# 打开excel文件,open_workbook(path),path为excel所在的路径
 		# 打开excel表,这里表示打开第一张表
@@ -55,7 +75,7 @@ class Read_xls:
 			# print(values)
 			for j in range(len(cols)):
 				# print('j=',j)
-				s[rows[0][j].value] = values[j].value
+				s[keyName[rows[0][j].value]] = values[j].value
 			# print(s)
 			resp.append(s)
 			x += 1
@@ -181,8 +201,8 @@ if __name__ == "__main__":
 	path = rootPath+r'docs/data.xlsx'
 	reads = Read_xls(path, u"委托下单")
 	# reads.write({"rowNum" : 3}, "2222222")
-	resp = reads.read()
-	# print(resp)
-	reads.get_dict(resp, rootPath)
+	# resp = reads.read()
+	# # print(resp)
+	# reads.get_dict(resp, rootPath)
 
 
