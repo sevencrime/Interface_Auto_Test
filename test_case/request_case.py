@@ -26,6 +26,11 @@ class request_case:
 		except AssertionError:
 			raise AssertionError
 
+	def _replace_all(self, body):
+		return body.replace("{{session_no}}", (self.gm.get_value("session_no") or "0")).replace("{{thread_id}}", 
+			self.gm.get_value("thread_id")).replace("{{entrust_no}}", (self.gm.get_value("entrust_no") or "0"))
+
+
 	def dataProcessing(self, casedata):
 		# print(casedata)
 
@@ -51,7 +56,7 @@ class request_case:
 			self.gm.set_value(thread_id=str(loginres['data']['thread_id']))
 
 		if (casedata['body'] or "") != "":
-			body = casedata['body'].replace("{{session_no}}", (self.gm.get_value("session_no") or "0")).replace("{{thread_id}}", self.gm.get_value("thread_id"))
+			body = self._replace_all(casedata['body'])
 			m = MultipartEncoder(fields={'QueryString': body})
 		else:
 			body = ""

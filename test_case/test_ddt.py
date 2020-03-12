@@ -18,10 +18,11 @@ import allure
 class Test_ddt:
 	# 获取excel用例
 	path = rootPath + r'docs/data.xlsx'
-	exl = Read_xls(path)
-	datalist = exl.read()
+	orderList = Read_xls(path, u"委托下单").read()
+	cancelOrder = Read_xls(path, u"委托撤单").read()
 
-	@pytest.mark.parametrize("testdata", datalist)
+	# 委托下单
+	@pytest.mark.parametrize("testdata", orderList)
 	def test_interface(self, testdata):
 		# print(testdata)
 
@@ -29,8 +30,22 @@ class Test_ddt:
 		# 写入数据
 		self.exl.write(testdata, response, resp_time)
 
+	# 委托撤单
+	@pytest.mark.parametrize("testdata", cancelOrder)
+	def test_interface1(self, testdata):
+		# print(testdata)
+
+		response, resp_time = request_case().dataProcessing(testdata)
+		import pdb; pdb.set_trace()
+		# 写入数据
+		self.exl.write(testdata, response, resp_time)
+
+
+
+
+
 if __name__ == '__main__':
-	pytest.main(["-v", "-s", "test_ddt.py", "--pdb"])
+	pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_interface", "--pdb"])
 
 
 
