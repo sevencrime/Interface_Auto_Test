@@ -45,12 +45,11 @@ class Test_ddt:
 
 
 if __name__ == '__main__':
-	pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_interface", "--pdb"])
-
-
+	# pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_interface", "--pdb"])
 
 	# 15033330000,psw=abcd1234  证券: 3001331110,psw=jxy7ke  期货: 800333216, psw=123456
 	#
 	# 15033331111,psw=abcd1234  证券: 3001331112,psw=wjxpg4  期货: 3001333212, psw=123456
 
-
+	a = {'error_no': -9999, 'error_info': '请求数据格式错误(entrust_bs==NULL), ID = 5', 'error_info_ansi': '�������ݸ�ʽ����(entrust_bs==NULL), ID = 5'}
+	print(a)

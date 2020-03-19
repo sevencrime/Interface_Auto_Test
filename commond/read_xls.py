@@ -199,10 +199,10 @@ if __name__ == "__main__":
 	curPath = os.path.abspath(os.path.dirname(__file__))
 	rootPath = curPath[:curPath.find("Interface_Auto_Test\\") + len("Interface_Auto_Test\\")]
 	path = rootPath+r'docs/data.xlsx'
-	reads = Read_xls(path, u"委托下单")
+	reads = Read_xls(path, u"查询历史订单")
 	# reads.write({"rowNum" : 3}, "2222222")
-	# resp = reads.read()
+	resp = reads.read()
 	# # print(resp)
-	# reads.get_dict(resp, rootPath)
+	reads.get_dict(resp, rootPath)
 
 
