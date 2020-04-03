@@ -217,9 +217,6 @@ if __name__ == "__main__":
 
     for data in datalist:
 
-        if data['rowNum'] < 101 :
-            continue
-
         # 登录, 每次请求都登录, 防止登录过期
         old_login_resp = login(old_url)
         new_login_resp = login(news_url)
@@ -299,7 +296,7 @@ if __name__ == "__main__":
         cmp_dict(old_resp, new_resp)
         print("\n")
         
-        if data['rowNum'] > 1 :
+        if data['rowNum'] > 30 :
             import pdb; pdb.set_trace()
         
 
