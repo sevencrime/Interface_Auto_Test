@@ -10,8 +10,11 @@ rootPath = curPath[:curPath.find("Interface_Auto_Test\\") + len("Interface_Auto_
 import sys
 sys.path.append(rootPath)
 from commond.read_xls import Read_xls
+from commond.get_apiData import generate_param
 from request_case import request_case
 import allure
+import json
+
 
 
 
@@ -28,28 +31,22 @@ class Test_ddt:
 
 		response, resp_time = request_case().dataProcessing(testdata)
 		# 写入数据
-		self.exl.write(testdata, response, resp_time)
+		# self.exl.write(testdata, response, resp_time)
 
-	# 委托撤单
-	@pytest.mark.parametrize("testdata", cancelOrder)
-	def test_interface1(self, testdata):
-		# print(testdata)
+	def test_read_jsonfile(self):
+		# 读取json文件
+		with open("../test_file/test.json",'r') as load_f:
+			load_dict = json.load(load_f)
+			print(load_dict)
 
-		response, resp_time = request_case().dataProcessing(testdata)
-		import pdb; pdb.set_trace()
-		# 写入数据
-		self.exl.write(testdata, response, resp_time)
-
-
+		API_KEY_DATA = generate_param().get_api_key_data(load_dict)
+		print(API_KEY_DATA)
 
 
 
 if __name__ == '__main__':
-	# pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_interface", "--pdb"])
+	pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_read_jsonfile"])
 
 	# 15033330000,psw=abcd1234  证券: 3001331110,psw=jxy7ke  期货: 800333216, psw=123456
 	#
 	# 15033331111,psw=abcd1234  证券: 3001331112,psw=wjxpg4  期货: 3001333212, psw=123456
-
-	a = {'error_no': -9999, 'error_info': '请求数据格式错误(entrust_bs==NULL), ID = 5', 'error_info_ansi': '�������ݸ�ʽ����(entrust_bs==NULL), ID = 5'}
-	print(a)
