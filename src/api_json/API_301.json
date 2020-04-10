@@ -1,0 +1,40 @@
+{
+    "name": "委托下单",
+    "url" : "http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx",
+    "method" : "post",
+    "type" : "form-data",
+    "headers" : {
+        "Content-Type":"application/x-www-form-urlencoded",
+        "User-Agent":"Openwave",
+        "Content-Language":"en-US"
+    }, 
+    "body" : [
+        {
+            "key": "name",
+            "type": "string",
+            "lenght": 8,
+            "isempty": "Y", 
+            "valueArea" : null, 
+            "default" : "15033331111"
+        },
+        {
+            "key": "phone",
+            "type": "string",
+            "lenght": 11,
+            "isempty": "Y",
+            "valueArea" : ["0", "1"], 
+            "default" : "15033331111"
+        },
+        {
+            "key": "age",
+            "type": "int",
+            "lenght": 6,
+            "isempty": "N",
+            "valueArea" : [10, 18, 19, 20],
+            "default" : 10
+        }   
+    ],
+    "params" : {"QueryString" : "%(params)"}
+
+}
+

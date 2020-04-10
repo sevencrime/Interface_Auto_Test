@@ -15,9 +15,6 @@ from request_case import request_case
 import allure
 import json
 
-
-
-
 class Test_ddt:
 	# 获取excel用例
 	path = rootPath + r'docs/data.xlsx'
@@ -33,19 +30,17 @@ class Test_ddt:
 		# 写入数据
 		# self.exl.write(testdata, response, resp_time)
 
-	def test_read_jsonfile(self):
-		# 读取json文件
-		with open("../test_file/test.json",'r') as load_f:
-			load_dict = json.load(load_f)
-			print(load_dict)
+	def test_read_jsonfile(self, name, phone, age):
+	    param = {}
+	    param['name'] = name
+	    param['phone'] = phone
+	    param['age'] = age
 
-		API_KEY_DATA = generate_param().get_api_key_data(load_dict)
-		print(API_KEY_DATA)
-
+	    print(param)
 
 
 if __name__ == '__main__':
-	pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_read_jsonfile"])
+	pytest.main(["-v", "-s", "test_ddt.py::Test_ddt::test_read_jsonfile", "--pdb"])
 
 	# 15033330000,psw=abcd1234  证券: 3001331110,psw=jxy7ke  期货: 800333216, psw=123456
 	#
