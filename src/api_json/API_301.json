@@ -10,29 +10,30 @@
     }, 
     "body" : [
         {
-            "key": "name",
+            "key": "account",
             "type": "string",
-            "lenght": 8,
+            "lenght": 16,
             "isempty": "Y", 
-            "valueArea" : null, 
-            "default" : "15033331111"
+            "valueArea" : null,
+            "default" : "3001331110"
         },
         {
-            "key": "phone",
+            "key": "password ",
             "type": "string",
-            "lenght": 11,
+            "lenght": 32,
             "isempty": "Y",
-            "valueArea" : ["0", "1"], 
-            "default" : "15033331111"
+            "valueArea" : null, 
+            "default" : "abcd1234"
         },
         {
-            "key": "age",
-            "type": "int",
-            "lenght": 6,
-            "isempty": "N",
-            "valueArea" : [10, 18, 19, 20],
-            "default" : 10
-        }   
+            "key": "account_type",
+            "type": "string",
+            "lenght": 4,
+            "isempty": "Y",
+            "valueArea" : ["0", "1", "2", "3", "4", "5", "6", "7", "8"],
+            "default" : "8"
+        }, 
+        
     ],
     "params" : {"QueryString" : "%(params)"}
 

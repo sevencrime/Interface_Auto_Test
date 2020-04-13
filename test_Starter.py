@@ -28,4 +28,14 @@ tests = {'name': ['onedi', '', 100, '(i8(@eLL', '(i8(@eLL4', '(i8(@eL'], 'phone'
 
 
 # print(fn([list3, list2, list1]))
+# print(fn([i for i in tests.values()]))
+
+
+# for i in fn([i for i in tests.values()]):
+#     print(dict(zip([k for k in tests.keys()], i.split(","))))
+
+
+if not isinstance('111', int):
+    print("ssss")
+
 
