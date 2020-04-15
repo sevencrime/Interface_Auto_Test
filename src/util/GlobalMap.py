@@ -41,7 +41,6 @@ class GlobalMap:
             self.log.error(msg)
             raise msg
 
-
     def del_map(self, key):
         try:
             # 删除变量
@@ -50,6 +49,10 @@ class GlobalMap:
             return self._map
         except KeyError:
             self.log.error("key:'" + str(key) + "'  不存在")
+
+    def del_mapall(self):
+        del self._map
+        return True
 
     def get_value(self, *args):
         try:
@@ -73,4 +76,4 @@ if __name__ == '__main__':
     gm.set_List("accountType", ["bullionMargin"])
     a = gm.get_value("accountType")
     print(a)
-    print(gm._map)
+    gm.del_mapall()

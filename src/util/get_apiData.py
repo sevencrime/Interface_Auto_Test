@@ -14,7 +14,7 @@ class generate_param():
         random_str = ''
         random_str_many = ''
         random_str_little = ''
-        base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789_-=+()@#$%^&*,.?'
+        base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789_-=+()@#$%^&*?'
         length = len(base_str) - 1
         for i in range(randomlength):
             random_str += base_str[random.randint(0, length)]
@@ -96,10 +96,14 @@ class generate_param():
         API_KEY_DATA = {}
 
         for param in api_document['body']:
-            if param['type'] == "string":
-                API_KEY_DATA[param['key']] = self.str_Generate(param)
+            if param['generate'] == "false":
+                # 转移成list类型, 便于生成测试数据
+                API_KEY_DATA[param['key'].strip()] = [param['default']]
+                continue
+            elif param['type'] == "string":
+                API_KEY_DATA[param['key'].strip()] = self.str_Generate(param)
             elif param['type'] == "int":
-                API_KEY_DATA[param['key']] = self.Int_Generate(param)
+                API_KEY_DATA[param['key'].strip()] = self.Int_Generate(param)
             else:
                 print("没有定义 {} 类型".format(param['type']))
 

@@ -1,41 +1,53 @@
 {
     "name": "委托下单",
-    "url" : "http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx",
-    "method" : "post",
-    "type" : "form-data",
-    "headers" : {
-        "Content-Type":"application/x-www-form-urlencoded",
-        "User-Agent":"Openwave",
-        "Content-Language":"en-US"
-    }, 
-    "body" : [
-        {
+    "url": "http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx",
+    "method": "post",
+    "type": "form-data",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Openwave",
+        "Content-Language": "en-US"
+    },
+    "body": [{
             "key": "account",
             "type": "string",
             "lenght": 16,
-            "isempty": "Y", 
-            "valueArea" : null,
-            "default" : "3001331110"
+            "isempty": "Y",
+            "valueArea": null,
+            "default": "3001331110",
+            "generate": "true"
         },
         {
             "key": "password ",
             "type": "string",
             "lenght": 32,
             "isempty": "Y",
-            "valueArea" : null, 
-            "default" : "abcd1234"
+            "valueArea": null,
+            "default": "abcd1234",
+            "generate": "true"
         },
         {
             "key": "account_type",
             "type": "string",
             "lenght": 4,
             "isempty": "Y",
-            "valueArea" : ["0", "1", "2", "3", "4", "5", "6", "7", "8"],
-            "default" : "8"
-        }, 
-        
+            "valueArea": ["0", "1", "2", "3", "4", "5", "6", "7", "8"],
+            "default": "8",
+            "generate": "true"
+        },
+        {
+            "key": "MF",
+            "type": "int",
+            "lenght": 4,
+            "isempty": "Y",
+            "valueArea": null,
+            "default": 201,
+            "generate": "false"
+        }
     ],
-    "params" : {"QueryString" : "%(params)"}
+    "params": {
+        "QueryString": "%(params)"
+    },
+    "ASSERT" : ["{'fund_account': '300133111022222'}", "'ok' in responese['error_info']"]
 
 }
-

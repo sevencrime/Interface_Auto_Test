@@ -1,40 +1,59 @@
-{
-    "name": "委托下单",
-    "url" : "http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx",
-    "method" : "post",
-    "type" : "form-data",
-    "headers" : {
-        "Content-Type":"application/x-www-form-urlencoded",
-        "User-Agent":"Openwave",
-        "Content-Language":"en-US"
-    }, 
-    "body" : [
-        {
-            "key": "name",
-            "type": "string",
-            "lenght": 8,
-            "isempty": "Y", 
-            "valueArea" : null, 
-            "default" : "onedi"
-        },
-        {
-            "key": "phone",
-            "type": "string",
-            "lenght": 11,
-            "isempty": "Y",
-            "valueArea" : ["0", "1"], 
-            "default" : "15033331111"
-        },
-        {
-            "key": "age",
+[{
+    "name": "登录",
+    "url": "http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx",
+    "method": "post",
+    "type": "form-data",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Openwave",
+        "Content-Language": "en-US"
+    },
+    "params": {"QueryString": "{'account': '3001331110', 'password': 'abcd1234', 'account_type': '8', 'MF': 201}"},
+    "STORE": {
+        "session_no": "response_text['data']['session_no']",
+        "thread_id" : "response_text['data']['thread_id']"
+    }
+
+}, {
+    "name": "查询汇率",
+    "url": "http://trade-route-develop.ntdev.be:8080/GXSocket/NewGateWay.aspx",
+    "method": "post",
+    "type": "form-data",
+    "headers": {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Openwave",
+        "Content-Language": "en-US"
+    },
+    "body": [{
+            "key": "session_no",
             "type": "int",
             "lenght": 6,
-            "isempty": "N",
-            "valueArea" : [10, 18, 19, 20],
-            "default" : 10
-        }   
+            "isempty": "Y",
+            "valueArea": null,
+            "default": 1,
+            "generate": "true"
+        },
+        {
+            "key": "thread_id ",
+            "type": "int",
+            "lenght": 6,
+            "isempty": "Y",
+            "valueArea": null,
+            "default": 0,
+            "generate": "true"
+        },
+        {
+            "key": "MF",
+            "type": "int",
+            "lenght": 4,
+            "isempty": "Y",
+            "valueArea": null,
+            "default": 410,
+            "generate": "false"
+        }
     ],
-    "params" : {"QueryString" : "%(params)"}
-
-}
-
+    "params": {
+        "QueryString": "%(params)"
+    },
+    "ASSERT": ["{'fund_account': '300133111022222'}", "'ok' in responese['error_info']"]
+}]
