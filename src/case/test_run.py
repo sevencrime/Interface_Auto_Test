@@ -10,11 +10,11 @@ class Test_Run:
     def test_run(self, apis, data):
         print(json.dumps(data))
 
-        if isinstance(apis, list):
-            for api in apis:
-                Post_json().postJson(apis=api, generateData=data)
-        else:
-            Post_json().postJson(apis=apis, generateData=data)
+        # if isinstance(apis, list):
+        #     for api in apis:
+        #         Post_json().postJson(apis=api, generateData=data)
+        # else:
+        #     Post_json().postJson(apis=apis, generateData=data)
 
 
 if __name__ == '__main__':

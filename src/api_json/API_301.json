@@ -13,18 +13,14 @@
             "type": "string",
             "lenght": 16,
             "isempty": "Y",
-            "valueArea": null,
-            "default": "3001331110",
-            "generate": "true"
+            "default": "3001331110"
         },
         {
             "key": "password ",
             "type": "string",
             "lenght": 32,
             "isempty": "Y",
-            "valueArea": null,
-            "default": "abcd1234",
-            "generate": "true"
+            "default": "abcd1234"
         },
         {
             "key": "account_type",
@@ -32,17 +28,29 @@
             "lenght": 4,
             "isempty": "Y",
             "valueArea": ["0", "1", "2", "3", "4", "5", "6", "7", "8"],
-            "default": "8",
-            "generate": "true"
+            "default": "8"
         },
         {
             "key": "MF",
             "type": "int",
             "lenght": 4,
             "isempty": "Y",
-            "valueArea": null,
             "default": 201,
-            "generate": "false"
+            "generate": "true"
+        },
+        {
+            "key" : "price",
+            "type" : "float",
+            "lenght" : 16 ,
+            "isempty" : "Y",
+            "default" : 57.450 
+        }, 
+        {
+            "key" : "age",
+            "type" : "int", 
+            "lenght" : 8 ,
+            "isempty" : "Y",
+            "default" : 18
         }
     ],
     "params": {
