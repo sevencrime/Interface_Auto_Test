@@ -96,9 +96,9 @@ class generate_param():
         return floatparamlist
 
     def get_api_key_data(self, api_document):
-        API_KEY_DATA = {}
-        requiredParam = {}
-        non_requiredParam = {}
+        API_KEY_DATA = {}   # 存放每个参数生成的测试数据列表
+        requiredParam = {}  # 存放所有必填参数, key == default
+        non_requiredParam = {} # 存放所有非必填参数
 
         for param in api_document.get('body'):
             if param.get("generate"):
@@ -126,9 +126,10 @@ class generate_param():
         # print(requiredParam)
         # print(non_requiredParam)
 
-        delparamlist = []
+        delparamlist = []   
 
         for key in requiredParam.keys():
+            # 遍历必填参数列表, 依次删除一个key
             delparam = requiredParam.copy()
             del delparam[key]
             delparamlist.append(delparam)
