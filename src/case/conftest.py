@@ -45,6 +45,8 @@ def pytest_generate_tests(metafunc):
             # 自动生成测试数据
             # API_KEY_DATA, delparamlist = generate_param().get_api_key_data(apis)
             datalist = generate_param().get_api_key_data(apis)
+            if apis.get("data"):
+                datalist.append(apis.get("data"))
             # 参数化数据
             metafunc.parametrize("data", datalist)
         else:
@@ -55,5 +57,7 @@ def pytest_generate_tests(metafunc):
             if api.get("body"):
                 # API_KEY_DATA, delparamlist = generate_param().get_api_key_data(api)
                 datalist = generate_param().get_api_key_data(api)
+                if api.get("data"):
+                    datalist.append(api.get("data"))
                 # 参数化数据
                 metafunc.parametrize("data", datalist)
