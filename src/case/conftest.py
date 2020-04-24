@@ -17,7 +17,7 @@ def api_info():
     :return: apis, 读取后的dict数据
     '''
     try:
-        with open("../api_json/{}.json".format("API_301"), encoding='utf-8') as f:
+        with open("../api_json/{}.json".format("统一认证-注册"), encoding='utf-8') as f:
             apis = json.load(f)
     except IOError as e:
         print(e)
@@ -39,94 +39,21 @@ def apis():
 
 def pytest_generate_tests(metafunc):
     apis = api_info()
-    fn = lambda x, code=',': reduce(lambda x, y: [str(i)+code+str(j) for i in x for j in y], x)
+    # fn = lambda x, code=',': reduce(lambda x, y: [str(i)+code+str(j) for i in x for j in y], x)
     if 'data' in metafunc.fixturenames and isinstance(apis, dict):
-        # 自动生成测试数据
-        API_KEY_DATA, delparamlist = generate_param().get_api_key_data(apis)
-        # 各参数的组合, 匿名函数
-        # 存放所有的参数组合, list
-        datalist = []
-        # for i in fn([i for i in API_KEY_DATA.values()]):
-        #     data = dict(zip([k for k in API_KEY_DATA.keys()], i.split(",")))
-
-        #     # 处理组合后的参数类型
-        #     for k, v in data.items():
-        #         if not isinstance(data[k], type(API_KEY_DATA[k][0])):
-
-        #             if type(API_KEY_DATA[k][0]) == int:
-        #                 try:
-        #                     data[k] = int(data[k])
-        #                 except:
-        #                     data[k] = float(data[k])
-        #             elif type(API_KEY_DATA[k][0]) == str:
-        #                 data[k] = str(data[k])
-        #             elif type(API_KEY_DATA[k][0]) == float:
-        #                 data[k] = float(data[k])
-        #             else:
-        #                 raise TypeError
-
-        #     datalist.append(data)
-
-        for k, v in API_KEY_DATA.items():
-            dict1 = {}
-            __newDATA = API_KEY_DATA.copy()
-            del __newDATA[k]
-
-            for newkey, newvalue in __newDATA.items():
-                dict1[newkey] = newvalue[0]
-
-            for sonV in v:
-                itdict = dict1.copy()
-                itdict[k] = sonV
-
-                datalist.append(itdict)
-
-
-        datalist = datalist + delparamlist
-        # 参数化数据
-        metafunc.parametrize("data", datalist)
+        if apis.get("body"):
+            # 自动生成测试数据
+            # API_KEY_DATA, delparamlist = generate_param().get_api_key_data(apis)
+            datalist = generate_param().get_api_key_data(apis)
+            # 参数化数据
+            metafunc.parametrize("data", datalist)
+        else:
+            metafunc.parametrize("data", apis.get("data"))
 
     elif 'data' in metafunc.fixturenames and isinstance(apis, list):
         for api in apis:
-            if "body" in api.keys():
-                API_KEY_DATA, delparamlist = generate_param().get_api_key_data(api)
-                # 各参数的组合, 匿名函数
-                # 存放所有的参数组合, list
-                datalist = []
-                # for i in fn([i for i in API_KEY_DATA.values()]):
-                #     data = dict(zip([k for k in API_KEY_DATA.keys()], i.split(",")))
-
-                #     # 处理组合后的参数类型
-                #     for k, v in data.items():
-                #         if not isinstance(data[k], type(API_KEY_DATA[k][0])):
-
-                #             if type(API_KEY_DATA[k][0]) == int:
-                #                 try:
-                #                     data[k] = int(data[k])
-                #                 except:
-                #                     data[k] = float(data[k])
-                #             elif type(API_KEY_DATA[k][0]) == str:
-                #                 data[k] = str(data[k])
-                #             else:
-                #                 raise TypeError
-
-                #     datalist.append(data)
-
-
-                for k, v in API_KEY_DATA.items():
-                    dict1 = {}
-                    __newDATA = API_KEY_DATA.copy()
-                    del __newDATA[k]
-
-                    for newkey, newvalue in __newDATA.items():
-                        dict1[newkey] = newvalue[0]
-
-                    for sonV in v:
-                        itdict = dict1.copy()
-                        itdict[k] = sonV
-
-                        datalist.append(itdict)
-
-                datalist = datalist + delparamlist
+            if api.get("body"):
+                # API_KEY_DATA, delparamlist = generate_param().get_api_key_data(api)
+                datalist = generate_param().get_api_key_data(api)
                 # 参数化数据
                 metafunc.parametrize("data", datalist)

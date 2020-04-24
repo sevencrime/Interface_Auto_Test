@@ -14,7 +14,7 @@ class generate_param():
         random_str = ''
         random_str_many = ''
         random_str_little = ''
-        base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789_-=+()@#$%^&*?'
+        base_str = 'ABCDEFGHIGKLMNOPQRSTUVWXYZabcdefghigklmnopqrstuvwxyz0123456789_-=+()@#$^&*?'
         length = len(base_str) - 1
         for i in range(randomlength):
             random_str += base_str[random.randint(0, length)]
@@ -38,6 +38,8 @@ class generate_param():
         paramlist.append("")
         # 类型非string
         paramlist.append(100)
+        # None
+        paramlist.append(None)
 
         if param.get("valueArea"):
             # 有取值区间
@@ -69,6 +71,7 @@ class generate_param():
         intparamlist.append(param.get("default") + 0.11)
         intparamlist.append(0)
         intparamlist.append(-1)
+        intparamlist.append(None)
 
         if param.get("valueArea"):
             # 遍历所有等价类
@@ -91,6 +94,7 @@ class generate_param():
         floatparamlist.append(str(param.get("default")))
         floatparamlist.append(0)
         floatparamlist.append(-1)
+        floatparamlist.append(None)
         floatparamlist.append(random.uniform(0, 100))
 
         return floatparamlist
@@ -99,7 +103,10 @@ class generate_param():
         API_KEY_DATA = {}   # 存放每个参数生成的测试数据列表
         requiredParam = {}  # 存放所有必填参数, key == default
         non_requiredParam = {} # 存放所有非必填参数
+        datalist = []
+        delparamlist = []   
 
+        # 从接口文档中解析数据
         for param in api_document.get('body'):
             if param.get("generate"):
                 # 转移成list类型, 便于生成测试数据
@@ -122,22 +129,32 @@ class generate_param():
             else:
                 print("不支持了")
 
+        # 解析API_KEY_DATA, 生成测试参数
+        for k, v in API_KEY_DATA.items():
+            dict1 = {}
+            __newDATA = API_KEY_DATA.copy()
+            del __newDATA[k]
 
-        # print(requiredParam)
-        # print(non_requiredParam)
+            for newkey, newvalue in __newDATA.items():
+                dict1[newkey] = newvalue[0]
 
-        delparamlist = []   
+            for sonV in v:
+                itdict = dict1.copy()
+                itdict[k] = sonV
+                itdict['test_name'] = "参数 {key} 传入类型为 {type} 的值 {value} ".format(key=k, type=type(sonV), value=sonV)
+                datalist.append(itdict)
 
+
+        # 生成 <必填参数不传> 的测试参数
         for key in requiredParam.keys():
-            # 遍历必填参数列表, 依次删除一个key
+            # 复制一个lsit对象
             delparam = requiredParam.copy()
             del delparam[key]
+            delparam['test_name'] = "参数 {key} 不传".format(key=key)
             delparamlist.append(delparam)
 
-        # print(delparamlist)
 
-        return API_KEY_DATA, delparamlist
-
+        return datalist + delparamlist
 
 
 if __name__ == "__main__":
@@ -146,24 +163,24 @@ if __name__ == "__main__":
         apis = json.load(f)
 
     g = generate_param()
-    API_KEY_DATA, delparamlist = g.get_api_key_data(apis)
-    print(API_KEY_DATA)
+    list1 = g.get_api_key_data(apis)
+    print(list1)
 
 
-    list1 = []
-    for k, v in API_KEY_DATA.items():
-        dict1 = {}
-        __newDATA = API_KEY_DATA.copy()
-        del __newDATA[k]
+    # list1 = []
+    # for k, v in API_KEY_DATA.items():
+    #     dict1 = {}
+    #     __newDATA = API_KEY_DATA.copy()
+    #     del __newDATA[k]
 
-        for newkey, newvalue in __newDATA.items():
-            dict1[newkey] = newvalue[0]
+    #     for newkey, newvalue in __newDATA.items():
+    #         dict1[newkey] = newvalue[0]
 
-        for sonV in v:
-            itdict = dict1.copy()
-            itdict[k] = sonV
+    #     for sonV in v:
+    #         itdict = dict1.copy()
+    #         itdict[k] = sonV
 
-            list1.append(itdict)
+    #         list1.append(itdict)
 
     # print(list1)
     # print(list1.__len__())

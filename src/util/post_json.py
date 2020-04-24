@@ -34,6 +34,7 @@ class Post_json:
             params = api.get('params')
             data = api.get('data')
             files = api.get('files')
+            test_name = api.get('test_name')
 
 
             # 特定动作(系统标签)
@@ -141,6 +142,7 @@ class Post_json:
             # 打印结果
             print("="*80)
             print("正在请求 {} 接口".format(api.get('name')))
+            print("用例名称 : {}".format(test_name))
             print("URL : {}".format(url))
             print("headers : {}".format(headers))
             print("data : {}".format((data or params)) )
