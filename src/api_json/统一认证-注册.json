@@ -5,7 +5,8 @@
     "headers": {
         "Content-Type" : "application/x-www-form-urlencoded",
         "Authorization" : "Basic dGVzdGFwcDI6YWJjZA==",
-        "x-api-key" : "cm9vdDphZG1pbg=="
+        "x-api-key" : "cm9vdDphZG1pbg==",
+        "Connection": "close"
     },
     "data": {
         "phone_number": "15089514626",

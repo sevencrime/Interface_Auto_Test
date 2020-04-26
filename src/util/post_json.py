@@ -63,7 +63,7 @@ class Post_json:
                 data = MultipartEncoder(fields=params)
                 headers['Content-Type'] = data.content_type
 
-
+            import pdb; pdb.set_trace()
             # 根据method发送不同请求
             if not method or method.lower() == 'post': # 有data字段默认使用post方法
                 response = session.post(url=url, headers=headers, cookies=cookies, data=data, files=files, timeout=timeout)

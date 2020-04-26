@@ -18,6 +18,8 @@ class Test_Run:
         else:
             Post_json().postJson(apis=apis, generateData=data)
 
+        import pdb; pdb.set_trace()
+
 
 if __name__ == '__main__':
-    pytest.main(["-s", "-v", "test_run.py::Test_Run"])
+    pytest.main(["-s", "-v", "test_run.py::Test_Run", "--pdb"])
