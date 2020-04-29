@@ -108,7 +108,7 @@ class generate_param():
 
         # 从接口文档中解析数据
         for param in api_document.get('body'):
-            if param.get("generate"):
+            if not param.get("generate"):
                 # 转移成list类型, 便于生成测试数据
                 API_KEY_DATA[param.get("key").strip()] = [param.get("default")]
                 continue
@@ -160,12 +160,13 @@ class generate_param():
 
 if __name__ == "__main__":
     import json
-    with open("../api_json/{}.json".format("API_301"), encoding='utf-8') as f:
+    with open("../api_json/{}.json".format("统一认证-注册"), encoding='utf-8') as f:
         apis = json.load(f)
 
     g = generate_param()
     list1 = g.get_api_key_data(apis)
     print(list1)
+    print(len(list1))
 
 
     # list1 = []

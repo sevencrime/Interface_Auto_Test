@@ -1,18 +1,21 @@
-import pytest
-from get_apiData import get_api_key_data
-
-API_KEY_DATA = get_api_key_data()
 
 
-def test_case(name, phone, age):
-    param = {}
-    param['name'] = name
-    param['phone'] = phone
-    param['age'] = age
+import requests
+import json
 
-    print(param)
+url = "http://localhost:3000/v2/user/register"
+data = {
+        "phone_number": "75089514626",
+        "password" : "Abcd1234", 
+        "phone_code" : "86"
+}
 
-
-
-if __name__ == '__main__':
-    pytest.main(["-s", "-v", "test_autoapi.py::test_case", "--pdb"])
+headers =  {
+    "Content-Type" : "application/x-www-form-urlencoded",
+    "Authorization" : "Basic dGVzdGFwcDI6YWJjZA==",
+    "x-api-key" : "cm9vdDphZG1pbg==",
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0'
+}
+s = requests.session()
+resp = s.post(url, data=json.dumps(data), headers=headers, timeout=10)
+print(resp.json())

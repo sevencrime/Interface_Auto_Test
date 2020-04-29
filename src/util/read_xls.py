@@ -28,10 +28,10 @@ class Read_xls:
 
         keyName = {
             "用例编号": "case",
-            "测试模块": "module",
+            "功能模块": "module",
             "子模块": "Submodule",
-            "优先级": "level",
-            "测试类型": "test_type",
+            "用例等级": "level",
+            "测试类别": "test_type",
             "用例标题": "name",
             "预置条件": "Preconditions",
             "接口地址": "URL",
@@ -44,19 +44,13 @@ class Read_xls:
             "测试轮次": "Test_Round",
             "执行人": "tester",
             "备注": "remark",
+            "操作步骤": "step",
+            "预期结果": "expected",
+            "操作步骤": "step"
         }
 
-        # print(path)
-        # 打开excel文件,open_workbook(path),path为excel所在的路径
         # 打开excel表,这里表示打开第一张表
         table = self.workbook.get_sheet_by_name(self.sheetname)
-
-        # nrows = table.max_row		# 获取excel的行数
-        # print(nrows)
-        # ncols = table.max_column		#获取excel的列数
-        # print(ncols)
-        # keys = table.row_values(0)		#获取第一行的值, 返回一个list
-        # print(keys)
 
         rows = []
         for row in table.iter_rows():
@@ -192,14 +186,255 @@ class Read_xls:
             print(e)
         os.system('pause')
 
+    # 转换成json文件, 供postman使用
+    def temp_get_dict(self, resp, rootPath=None, **kwargs):
+
+        list1 = []
+        for res in resp:
+            name = res['name']
+            method = kwargs.get("method")
+            body = res['step']
+            uri = kwargs.get("uri")
+            headers = kwargs.get("headers")
+
+            # 转换body
+            body = re.search(r'[{](.*?)[}]', body.replace("\n", "").replace(" ", "")).group()
+            pathlist = "".join(re.findall("[^8080]+(?!.*/)", uri)).split("/")
+            pathlist.remove('{{server}}')
+
+
+            # 构造body中x-www-form-urlencoded
+            bodylist = []
+            for k, v in eval(body).items():
+                bitem = {}
+                bitem["key"] = k
+                bitem["value"] = v
+                bitem["type"] = "text"
+                bodylist.append(bitem)
+
+            dict1 = {
+                "name": name,
+                "request": {
+                    "method": method,
+                    "header": headers,
+                    "body": {
+                        "mode": "urlencoded",
+                        "urlencoded": bodylist
+                    },
+                    "url": {
+                        "raw": uri,
+                        "host": [
+                            "{{server}}"
+                        ],
+                        "path": pathlist
+                    }
+                },
+                "response": []
+            }
+            list1.append(dict1)
+
+        # print(list1)
+
+        head_dict = {
+            "info": {
+                "_postman_id": "63ef4c63-f578-46c3-9888-6c762a7ba3ec",
+                "name": self.sheetname,
+                "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+            },
+            "protocolProfileBehavior": {}
+        }
+        head_dict['item'] = list1
+        # print(head_dict)
+        print(json.dumps(head_dict, ensure_ascii=False))
+
+        # 保存为utf-8编码的文件
+        filename = rootPath + r"docs/{}.json".format(self.sheetname)
+        try:
+            f = codecs.open(filename, 'w', 'UTF-8')
+            f.write(json.dumps(head_dict, ensure_ascii=False))
+            f.close()
+        except Exception as e:
+            print(e)
+        os.system('pause')
+
+
+def run_Ayers_json(rootPath):
+    path = rootPath + r'docs/ayers网关接口测试用例.xlsx'
+    reads = Read_xls(path, u"委托撤单")
+
+
+
+# 统一认证
+def run_certification_json(rootPath, sheetname):
+    path = rootPath + r'docs/统一认证中心.xlsx'
+    reads = Read_xls(path, sheetname)
+    # reads.write({"rowNum" : 3}, "2222222")
+    resp = reads.read()
+    # print(resp)
+    # reads.get_dict(resp, rootPath)
+    uri = "{{server}}/v2/inward/users"
+    headers = [
+        {
+            "key": "x-api-key",
+            "value": "cm9vdDphZG1pbg==",
+            "type": "text"
+        },
+        {
+            "key": "Authorization",
+            "value": "Basic {{Authorization}}",
+            "type": "text"
+        }
+    ]
+    reads.temp_get_dict(resp, rootPath, method="post", uri=uri, headers=headers)
+
+
+
+def get_jmx(rootPath, sheetname, **kwargs):
+
+    path = rootPath + r'docs/统一认证中心.xlsx'
+    reads = Read_xls(path, sheetname)
+    # reads.write({"rowNum" : 3}, "2222222")
+    resp = reads.read()
+
+
+    jmxstr = '''<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.0 r1840935">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="测试计划" enabled="true">
+      <stringProp name="TestPlan.comments"></stringProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <stringProp name="TestPlan.user_define_classpath"></stringProp>
+    </TestPlan>
+    <hashTree>
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP信息头管理器" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">x-api-key</stringProp>
+            <stringProp name="Header.value">cm9vdDphZG1pbg==</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Authorization</stringProp>
+            <stringProp name="Header.value">Basic dGVzdGFwcDI6YWJjZA==</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname='{sheetname}' enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </ThreadGroup>
+      <hashTree>
+        {httplist}
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
+    '''
+
+
+    httpstr = '''
+<HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname='{casename}' enabled="true">
+  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+    <collectionProp name="Arguments.arguments">
+      {paramslist}
+    </collectionProp>
+  </elementProp>
+  <stringProp name="HTTPSampler.domain">{domain}</stringProp>
+  <stringProp name="HTTPSampler.port">{port}</stringProp>
+  <stringProp name="HTTPSampler.protocol">{protocol}</stringProp>
+  <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+  <stringProp name="HTTPSampler.path">{path}</stringProp>
+  <stringProp name="HTTPSampler.method">{method}</stringProp>
+  <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+  <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+  <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+  <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+  <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+  <stringProp name="HTTPSampler.response_timeout"></stringProp>
+</HTTPSamplerProxy>
+<hashTree/>
+    '''
+
+    params = '''
+<elementProp name="phone_number" elementType="HTTPArgument">
+  <boolProp name="HTTPArgument.always_encode">false</boolProp>
+  <stringProp name="Argument.value">{value}</stringProp>
+  <stringProp name="Argument.metadata">=</stringProp>
+  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+  <stringProp name="Argument.name">{key}</stringProp>
+</elementProp>
+    '''
+
+    httplist = []
+
+    for res in resp:
+        name = res['name']
+        method = kwargs.get("method")
+        body = res['step']
+        uri = kwargs.get("uri")
+        headers = kwargs.get("headers")
+
+        # 转换body
+        body = re.search(r'[{](.*?)[}]', body.replace("\n", "").replace(" ", "")).group()
+
+        paramlist = []
+        for k, v in eval(body).items():
+            param = params.format(key=k, value=v)
+            paramlist.append(param)
+
+
+        http_format = httpstr.format(
+                    casename=name,
+                    paramslist="".join(paramlist),
+                    domain=uri,
+                    port=kwargs.get("port"),
+                    protocol=kwargs.get("protocol"),
+                    method=method,
+                    path=kwargs.get("path")
+                )
+
+
+        httplist.append(http_format)
+
+    jmxstr = jmxstr.format(sheetname=sheetname, httplist="".join(httplist))
+    # print(jmxstr)
+
+    # 保存为utf-8编码的文件
+    filename = rootPath + r"docs/{}.jmx".format(sheetname)
+    try:
+        f = codecs.open(filename, 'w', 'UTF-8')
+        f.write(jmxstr)
+        f.close()
+    except Exception as e:
+        print(e)
+    os.system('pause')
+
+
 
 if __name__ == "__main__":
     # path = 'E:/郑某人/Python_Demo/Interface_Test_Frame/data/data.xls'
     curPath = os.path.abspath(os.path.dirname(__file__))
     rootPath = curPath[:curPath.find("Interface_Auto_Test\\") + len("Interface_Auto_Test\\")]
-    path = rootPath + r'docs/data.xlsx'
-    reads = Read_xls(path, u"查询历史订单")
-    # reads.write({"rowNum" : 3}, "2222222")
-    resp = reads.read()
-    # # print(resp)
-    reads.get_dict(resp, rootPath)
+    # path = rootPath + r'docs/ayers网关接口测试用例.xlsx'
+    # reads = Read_xls(path, u"委托撤单")
+
+    # run_certification_json(rootPath, u"V1-密码方式获取token")
+    uri = "eddid-auth-center-develop.eddidone.be"
+    port = "180"
+    protocol = "http"
+    path="/v2/inward/users"
+    get_jmx(rootPath, u"注册", method="post", uri=uri, port=port, protocol=protocol, path=path)

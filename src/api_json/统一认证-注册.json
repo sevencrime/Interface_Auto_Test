@@ -1,18 +1,17 @@
 {
     "name": "注册",
-    "url": "https://eddid-auth-center-dev.eddid.tech/v2/user/register",
+    "url": "http://localhost:3000/v2/user/register",
     "method": "post",
     "headers": {
         "Content-Type" : "application/x-www-form-urlencoded",
         "Authorization" : "Basic dGVzdGFwcDI6YWJjZA==",
-        "x-api-key" : "cm9vdDphZG1pbg==",
-        "Connection": "close"
+        "x-api-key" : "cm9vdDphZG1pbg=="
     },
     "data": {
-        "phone_number": "15089514626",
+        "phone_number": "75089514626",
         "password" : "Abcd1234", 
         "phone_code" : "86"
-}   ,
+    },
     "body":[{
             "key": "phone_number",
             "type": "string",
@@ -20,7 +19,7 @@
             "isempty": "Y",
             "valueArea": null,
             "default": "15089514626",
-            "generate": "true"
+            "generate": true
         },
         {
             "key": "password ",
@@ -29,7 +28,7 @@
             "isempty": "Y",
             "valueArea": null,
             "default": "abcd1234",
-            "generate": "true"
+            "generate": true
         },
         {
             "key": "phone_code",
@@ -38,7 +37,7 @@
             "isempty": "Y",
             "valueArea": ["86", "852", "886"],
             "default": 86,
-            "generate": "true"
+            "generate": true
         }
     ],
     "ASSERT" : ["{'message': 'Success'}", "'error' not in response_text"]
