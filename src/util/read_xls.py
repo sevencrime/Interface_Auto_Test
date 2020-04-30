@@ -437,4 +437,5 @@ if __name__ == "__main__":
     port = "180"
     protocol = "http"
     path="/v2/inward/users"
-    get_jmx(rootPath, u"注册", method="post", uri=uri, port=port, protocol=protocol, path=path)
+    method = "post"
+    get_jmx(rootPath, u"注册", method=method.upper(), uri=uri, port=port, protocol=protocol, path=path)
