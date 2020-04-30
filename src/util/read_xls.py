@@ -296,7 +296,7 @@ def get_jmx(rootPath, sheetname, **kwargs):
     # reads.write({"rowNum" : 3}, "2222222")
     resp = reads.read()
 
-
+    # JMX 文件头格式
     jmxstr = '''<?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.0 r1840935">
   <hashTree>
@@ -324,6 +324,7 @@ def get_jmx(rootPath, sheetname, **kwargs):
         </collectionProp>
       </HeaderManager>
       <hashTree/>
+      {HttpDefault}
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname='{sheetname}' enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="循环控制器" enabled="true">
@@ -344,7 +345,45 @@ def get_jmx(rootPath, sheetname, **kwargs):
 </jmeterTestPlan>
     '''
 
+    # JMX文件的请求默认值
+    HttpDefault = '''
+      <ConfigTestElement guiclass="HttpDefaultsGui" testclass="ConfigTestElement" testname="HTTP请求默认值" enabled="true">
+        <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
+          <collectionProp name="Arguments.arguments"/>
+        </elementProp>
+        <stringProp name="HTTPSampler.domain">{domain}</stringProp>
+        <stringProp name="HTTPSampler.port">{port}</stringProp>
+        <stringProp name="HTTPSampler.protocol">{protocol}</stringProp>
+        <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+        <stringProp name="HTTPSampler.path"></stringProp>
+        <stringProp name="HTTPSampler.concurrentPool">6</stringProp>
+        <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+        <stringProp name="HTTPSampler.response_timeout"></stringProp>
+      </ConfigTestElement>
+      <hashTree/>
+    '''
 
+    # JMX文件请求头管理器
+    headerPanel = '''
+      <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP信息头管理器" enabled="true">
+        <collectionProp name="HeaderManager.headers">
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">x-api-key</stringProp>
+            <stringProp name="Header.value">cm9vdDphZG1pbg==</stringProp>
+          </elementProp>
+          <elementProp name="" elementType="Header">
+            <stringProp name="Header.name">Authorization</stringProp>
+            <stringProp name="Header.value">Basic dGVzdGFwcDI6YWJjZA==</stringProp>
+          </elementProp>
+        </collectionProp>
+      </HeaderManager>
+      <hashTree/>
+
+    '''
+
+
+
+    # JMX 文件的HTTP请求
     httpstr = '''
 <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname='{casename}' enabled="true">
   <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="用户定义的变量" enabled="true">
@@ -352,9 +391,9 @@ def get_jmx(rootPath, sheetname, **kwargs):
       {paramslist}
     </collectionProp>
   </elementProp>
-  <stringProp name="HTTPSampler.domain">{domain}</stringProp>
-  <stringProp name="HTTPSampler.port">{port}</stringProp>
-  <stringProp name="HTTPSampler.protocol">{protocol}</stringProp>
+  <stringProp name="HTTPSampler.domain"></stringProp>
+  <stringProp name="HTTPSampler.port"></stringProp>
+  <stringProp name="HTTPSampler.protocol"></stringProp>
   <stringProp name="HTTPSampler.contentEncoding"></stringProp>
   <stringProp name="HTTPSampler.path">{path}</stringProp>
   <stringProp name="HTTPSampler.method">{method}</stringProp>
@@ -369,6 +408,7 @@ def get_jmx(rootPath, sheetname, **kwargs):
 <hashTree/>
     '''
 
+    # JMX文件, HTTP请求中的参数
     params = '''
 <elementProp name="phone_number" elementType="HTTPArgument">
   <boolProp name="HTTPArgument.always_encode">false</boolProp>
@@ -400,9 +440,6 @@ def get_jmx(rootPath, sheetname, **kwargs):
         http_format = httpstr.format(
                     casename=name,
                     paramslist="".join(paramlist),
-                    domain=uri,
-                    port=kwargs.get("port"),
-                    protocol=kwargs.get("protocol"),
                     method=method,
                     path=kwargs.get("path")
                 )
@@ -410,7 +447,7 @@ def get_jmx(rootPath, sheetname, **kwargs):
 
         httplist.append(http_format)
 
-    jmxstr = jmxstr.format(sheetname=sheetname, httplist="".join(httplist))
+    jmxstr = jmxstr.format(sheetname=sheetname, httplist="".join(httplist), HttpDefault=HttpDefault.format(domain=uri, port=kwargs.get("port"), protocol=kwargs.get("protocol")))
     # print(jmxstr)
 
     # 保存为utf-8编码的文件
@@ -436,6 +473,6 @@ if __name__ == "__main__":
     uri = "eddid-auth-center-develop.eddidone.be"
     port = "180"
     protocol = "http"
-    path="/v2/inward/users"
+    path="token"
     method = "post"
-    get_jmx(rootPath, u"注册", method=method.upper(), uri=uri, port=port, protocol=protocol, path=path)
+    get_jmx(rootPath, u"V1-密码方式获取token", method=method.upper(), uri=uri, port=port, protocol=protocol, path=path)
